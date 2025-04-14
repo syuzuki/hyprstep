@@ -1,0 +1,14 @@
+[repository]
+name = "hyprstep"
+authors = ["syuzuki"]
+commit_pins = [
+]
+
+[hyprstep]
+description = "Add additional monitor specifier to find by the positions"
+authors = ["syuzuki"]
+output = "build/hyprstep.so"
+build = [
+  "meson setup build --wipe",
+  "ninja -C build",
+]
