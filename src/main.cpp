@@ -111,16 +111,12 @@ namespace {
                 char c = view.at(0);
                 view.remove_prefix(1);
 
-                bool valid = false;
-                for (auto d : {'l', 'r', 't', 'b'}) {
-                    if (d == c) {
-                        mon   = getMonitorInDirectionFix(*g_pCompositor, mon, d);
-                        valid = true;
-                        break;
-                    }
-                }
-                if (!valid) {
-                    Debug::log(WARN, std::format("[hyprstep] Ignoring invalid monitor name part: {}, name={}", c, name));
+                switch (c) {
+                    case 'l':
+                    case 'r':
+                    case 't':
+                    case 'b': mon = getMonitorInDirectionFix(*g_pCompositor, mon, c); break;
+                    default: Debug::log(WARN, std::format("[hyprstep] Ignoring invalid monitor name part: {}, name={}", c, name)); break;
                 }
                 if (!mon) {
                     Debug::log(WARN, std::format("[hyprstep] No monitor found at: {}, name={}", std::string_view(name).substr(0, name.length() - view.length()).substr(5), name));
