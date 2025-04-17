@@ -13,7 +13,6 @@ To install, run:
 ```sh
 hyprpm add https://github.com/syuzuki/hyprstep.git
 hyprpm enable hyprstep
-hyprpm reload
 ```
 
 To update, run:
