@@ -2,6 +2,7 @@
 name = "hyprstep"
 authors = ["syuzuki"]
 commit_pins = [
+  ["29e2e59fdbab8ed2cc23a20e3c6043d5decb5cdc", "1.0.0"], # 0.48.1
 ]
 
 [hyprstep]
