@@ -114,7 +114,9 @@ namespace {
                 switch (c) {
                     case 'l':
                     case 'r':
+                    case 'u':
                     case 't':
+                    case 'd':
                     case 'b': mon = getMonitorInDirectionFix(*g_pCompositor, mon, c); break;
                     default: Debug::log(WARN, std::format("[hyprstep] Ignoring invalid monitor name part: {}, name={}", c, name)); break;
                 }
