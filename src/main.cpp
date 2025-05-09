@@ -3,7 +3,6 @@
 #include <string_view>
 #include <stdexcept>
 
-#include <hyprland/src/helpers/Monitor.hpp>
 #include <hyprland/src/plugins/PluginAPI.hpp>
 #include <hyprland/src/Compositor.hpp>
 
@@ -18,72 +17,6 @@ namespace {
         HyprlandAPI::addNotification(g_handle, message, {1.0, 0.2, 0.2, 1.0}, 5000);
         Debug::log(ERR, message);
         throw std::runtime_error(message);
-    }
-
-    PHLMONITOR getMonitorInDirectionFix(CCompositor& compositor, PHLMONITOR sourceMonitor, char dir) {
-        // CCompositor::getMonitorInDirection() ignores sourceMonitor, so temporary fix by this function
-
-        if (!sourceMonitor)
-            return nullptr;
-
-        const auto POSA  = sourceMonitor->m_position;
-        const auto SIZEA = sourceMonitor->m_size;
-
-        auto       longestIntersect        = -1;
-        PHLMONITOR longestIntersectMonitor = nullptr;
-
-        for (auto const& m : compositor.m_monitors) {
-            if (m == sourceMonitor)
-                continue;
-
-            const auto POSB  = m->m_position;
-            const auto SIZEB = m->m_size;
-            switch (dir) {
-                case 'l':
-                    if (STICKS(POSA.x, POSB.x + SIZEB.x)) {
-                        const auto INTERSECTLEN = std::max(0.0, std::min(POSA.y + SIZEA.y, POSB.y + SIZEB.y) - std::max(POSA.y, POSB.y));
-                        if (INTERSECTLEN > longestIntersect) {
-                            longestIntersect        = INTERSECTLEN;
-                            longestIntersectMonitor = m;
-                        }
-                    }
-                    break;
-                case 'r':
-                    if (STICKS(POSA.x + SIZEA.x, POSB.x)) {
-                        const auto INTERSECTLEN = std::max(0.0, std::min(POSA.y + SIZEA.y, POSB.y + SIZEB.y) - std::max(POSA.y, POSB.y));
-                        if (INTERSECTLEN > longestIntersect) {
-                            longestIntersect        = INTERSECTLEN;
-                            longestIntersectMonitor = m;
-                        }
-                    }
-                    break;
-                case 't':
-                case 'u':
-                    if (STICKS(POSA.y, POSB.y + SIZEB.y)) {
-                        const auto INTERSECTLEN = std::max(0.0, std::min(POSA.x + SIZEA.x, POSB.x + SIZEB.x) - std::max(POSA.x, POSB.x));
-                        if (INTERSECTLEN > longestIntersect) {
-                            longestIntersect        = INTERSECTLEN;
-                            longestIntersectMonitor = m;
-                        }
-                    }
-                    break;
-                case 'b':
-                case 'd':
-                    if (STICKS(POSA.y + SIZEA.y, POSB.y)) {
-                        const auto INTERSECTLEN = std::max(0.0, std::min(POSA.x + SIZEA.x, POSB.x + SIZEB.x) - std::max(POSA.x, POSB.x));
-                        if (INTERSECTLEN > longestIntersect) {
-                            longestIntersect        = INTERSECTLEN;
-                            longestIntersectMonitor = m;
-                        }
-                    }
-                    break;
-            }
-        }
-
-        if (longestIntersect != -1)
-            return longestIntersectMonitor;
-
-        return nullptr;
     }
 
     PHLMONITOR getMonitorFromStringWrapper(CCompositor* compositor, const std::string& name) {
@@ -117,7 +50,7 @@ namespace {
                     case 'u':
                     case 't':
                     case 'd':
-                    case 'b': mon = getMonitorInDirectionFix(*g_pCompositor, mon, c); break;
+                    case 'b': mon = g_pCompositor->getMonitorInDirection(mon, c); break;
                     default: Debug::log(WARN, std::format("[hyprstep] Ignoring invalid monitor name part: {}, name={}", c, name)); break;
                 }
                 if (!mon) {
