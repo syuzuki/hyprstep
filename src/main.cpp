@@ -26,18 +26,18 @@ namespace {
         if (!sourceMonitor)
             return nullptr;
 
-        const auto POSA  = sourceMonitor->vecPosition;
-        const auto SIZEA = sourceMonitor->vecSize;
+        const auto POSA  = sourceMonitor->m_position;
+        const auto SIZEA = sourceMonitor->m_size;
 
         auto       longestIntersect        = -1;
         PHLMONITOR longestIntersectMonitor = nullptr;
 
-        for (auto const& m : compositor.m_vMonitors) {
+        for (auto const& m : compositor.m_monitors) {
             if (m == sourceMonitor)
                 continue;
 
-            const auto POSB  = m->vecPosition;
-            const auto SIZEB = m->vecSize;
+            const auto POSB  = m->m_position;
+            const auto SIZEB = m->m_size;
             switch (dir) {
                 case 'l':
                     if (STICKS(POSA.x, POSB.x + SIZEB.x)) {
@@ -128,7 +128,7 @@ namespace {
 
             return mon;
         } else {
-            return reinterpret_cast<GetMonitor>(g_monitorHook->m_pOriginal)(compositor, name);
+            return reinterpret_cast<GetMonitor>(g_monitorHook->m_original)(compositor, name);
         }
     }
 }
